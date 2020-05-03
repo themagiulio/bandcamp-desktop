@@ -5,8 +5,8 @@
 
 #Downloaded Packages
 
-packages/cef.redist~
-packages/CefSharp~
+packages/cef.redist*
+packages/CefSharp*
 
 #Bandcamp-desktop build directories
 bin/
