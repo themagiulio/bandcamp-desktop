@@ -1,0 +1,19 @@
+
+#Visual Studio .vs
+#.vs/
+
+
+#Downloaded Packages
+
+packages/cef.redist*
+packages/CefSharp*
+
+#Bandcamp-desktop build directories
+bin/
+obj/
+
+
+#installer-gen Installs
+
+installer-gen/Debug/
+installer-gen/Release/
