@@ -1,0 +1,9 @@
+
+#Visual Studio .vs
+.vs/
+
+
+#Downloaded Packages
+
+packages/cef.redist~
+packages/CefSharp~
