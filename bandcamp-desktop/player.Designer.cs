@@ -32,7 +32,8 @@
             this.idtxt = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.webplayer = new CefSharp.WinForms.ChromiumWebBrowser();
+            //this.webplayer = new CefSharp.WinForms.ChromiumWebBrowser();
+            this.webplayer = new CefSharp.WinForms.ChromiumWebBrowser("www.bandcamp.com", null);
             this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
