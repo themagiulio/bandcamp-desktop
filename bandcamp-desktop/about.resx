@@ -125,7 +125,7 @@ This software and its components are Open-Source:
 bandcamp Desktop on Github: https://github.com/themagiulio/bandcamp-desktop
 CefSharp on Github: https://github.com/cefsharp/CefSharp
 
-LICENSE:
+LICENSE: MIT
 WEBSITE: https://giulio.wtf/bandcamp-desktop</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
