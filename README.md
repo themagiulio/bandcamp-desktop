@@ -14,11 +14,12 @@ Keep listening to the music while you explore the website! That's the killer fea
 
 It's very simple to use: just go to the album (or song, ep...) and click Music > Mini Player.
 
-##Build Instructions
-Make sure to enable "Release" and "x86" when building the solution, as it will nto work with "Any CPU".
+## Build Instructions
+Make sure to enable "Release" and "x86" when building the solution, as it will not work with "Any CPU".
 
-#Install Instructions
+
+## Install Instructions
 After building the solution, in the installer-gen/Release folder, there will be an msi which you can use to install the bandcamp desktop app.
-
+In order to build the msi installer you need to download the <a href="https://marketplace.visualstudio.com/items?itemName=VisualStudioClient.MicrosoftVisualStudio2017InstallerProjects">Visual Studio Project Setup Extension</a>.
 
 ![Alt Text](https://codegiuliotop.000webhostapp.com/bin/bd.png)
