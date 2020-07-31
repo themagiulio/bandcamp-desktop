@@ -1,0 +1,52 @@
+{
+  "name": "bandcamp-desktop",
+  "version": "2.0.0",
+  "description": "bandcamp Desktop is a desktop application written by Giulio De Matteis.\r It allows you to use bandcamp.com in an easy and quick way.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder build --mac --win --linux --ia32 --publish never",
+    "deploy": "electron-builder build --mac --win --linux --ia32 --publish always"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/themagiulio/bandcamp-desktop.git"
+  },
+  "author": "Giulio De Matteis <giuliodematteis@icloud.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/themagiulio/bandcamp-desktop/issues"
+  },
+  "homepage": "https://github.com/themagiulio/bandcamp-desktop#readme",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "electron-updater": "^4.3.4",
+    "request": "^2.88.2",
+    "url": "^0.11.0"
+  },
+  "devDependencies": {
+    "electron": "^9.1.2",
+    "electron-builder": "^22.8.0"
+  },
+  "build": {
+    "directories": {
+      "output": "dist",
+      "buildResources": "buildResources"
+    },
+    "appId": "com.themagiulio.bandcamp-desktop",
+    "win": {
+      "icon": "bandcamp-logo.png"
+    },
+    "mac": {
+      "icon": "bandcamp-logo.icns",
+      "target": "dmg"
+    },
+    "linux": {
+      "icon": "bandcamp-logo.png",
+      "target": [
+        "AppImage"
+      ],
+      "category": "Music"
+    }
+  }
+}
