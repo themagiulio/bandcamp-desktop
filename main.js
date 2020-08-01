@@ -1,13 +1,10 @@
 const cheerio = require('cheerio');
 const electron = require('electron');
 const { autoUpdater } = require('electron-updater');
-const {app, BrowserWindow, dialog, Menu, ipcMain, shell} = electron;
-//const electronstore = require('electron-store');
+const { app, BrowserWindow, dialog, ipcMain, Menu, shell } = electron;
 const path = require('path');
 const request = require('request');
 const url = require('url');
-
-//const store = new electronstore();
 
 let mainWindow;
 
@@ -21,8 +18,6 @@ function createWindow(){
   mainWindow = new BrowserWindow({
                                     width: 1400,
                                     height: 725,
-                								    minWidth: 1400,
-                								    minHeight: 725,
                                     center: true,
                                     titleBarStyle: 'hidden',
                                     frame: process.platform == 'darwin' ? false : true,
@@ -40,7 +35,7 @@ function createWindow(){
     const response = dialog.showMessageBox(mainWindow,
     {
       title: 'About Bandcamp Desktop',
-      message: 'Bandcamp Desktop is a crossplatform desktop application written by Giulio De Matteis.\nIt allows you to use bandcamp.com in an easy and quick way.\n\nVersion: v2.0.0\n\nBuilt using cheerio, electron framework, electron-builder, electron-updater, request and url packages with their dependecies.'
+      message: 'Bandcamp Desktop is a crossplatform desktop application written by Giulio De Matteis.\nIt allows you to use bandcamp.com in an easy and quick way.\n\nVersion: v' + app.getVersion() + '\n\nBuilt using cheerio, electron framework, electron-builder, electron-updater, request and url packages with their dependecies.'
     });
   }
 
@@ -55,7 +50,6 @@ function createWindow(){
   const isMac = process.platform === 'darwin'
 
   var template = [
-    // { role: 'appMenu' }
     ...(isMac ? [{
       label: app.name,
       submenu: [
@@ -84,29 +78,43 @@ function createWindow(){
           click(){
             request({
                 uri: mainWindow.webContents.getURL(),
-              }, function(error, response, body) {
+                }, function(error, response, body) {
 
-                //console.log(body);
                 var $ = cheerio.load(body);
-                var meta = $("meta");
+                var meta = $('meta');
+                var title = $('title').text();
                 var id = meta[20]['attribs']['content'].replace('https://bandcamp.com/EmbeddedPlayer/v=2/album=', '').replace('/size=large/tracklist=false/artwork=small/', '');
 
                 if(id != ''){
                   player = new BrowserWindow({
-                                                width: 385,
+                                                width: 395,
                                                 height: 600,
                                                 center: true,
                                                 titleBarStyle: 'hidden',
                                                 frame: process.platform == 'darwin' ? false : true,
                                               });
 
-                  player.loadURL(require('url').format({
-                    pathname: 'giuliodematteis.altervista.org/bandcamp-desktop/player.php',
-                    query: {'id': id},
-                    protocol: 'https:',
-                    slashes: true
+                  const loadView = ({title,scriptUrl}) => {
+                    return (`
+                      <!DOCTYPE html>
+                      <html>
+                        <head>
+                          <title>${title}</title>
+                          <meta charset="UTF-8">
+                        </head>
+                        <body>
+                          <iframe style="border: 0; width: 350px; height: 600px;" src="https://bandcamp.com/EmbeddedPlayer/album=${id}/size=large/bgcol=ffffff/tracklist=true/transparent=true/" seamless>
+                          </iframe>
+                        </body>
+                      </html>
+                    `)
+                  }
+
+                  var file = 'data:text/html;charset=UTF-8,' + encodeURIComponent(loadView({
+                    title: title,
                   }));
 
+                  player.loadURL(file);
                   player.setMenu(null);
                   player.setResizable(false);
                 }
@@ -114,7 +122,14 @@ function createWindow(){
           }
         },
         { type: 'separator' },
-        isMac ? { role: 'close', accelerator: process.platform == 'darwin' ? 'Command+Q' : 'Ctrl+Q', } : { role: 'quit', accelerator: process.platform == 'darwin' ? 'Command+Q' : 'Ctrl+Q', }
+        {
+          label: 'Open in Browser Window',
+          accelerator: process.platform == 'darwin' ? 'Command+O' : 'Ctrl+O',
+          click: async () => {
+            await shell.openExternal(mainWindow.webContents.getURL())
+          }
+        },
+        isMac ? { role: 'close', accelerator: 'Command+Q', } : { role: 'quit', accelerator: 'Ctrl+Q', }
       ]
     },
     {
