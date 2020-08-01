@@ -5,7 +5,7 @@ Note that bandcamp Desktop is not affiliated with Bandcamp, it is only a fan-mad
 
 # Imprtant announcement
 The whole software has been recoded in order to make a crossplatform app.
-The new version (`v2.0.0`) of Bandcamp Desktop is build using electron, and that is really advantageous!
+The new version (`v2.0.0`) of Bandcamp Desktop is built using electron and that is really advantageous!
 
 This version will be published as a Stable Release after some test and bug fixes. Currently you can only download the source code and compile it on your own.
 
