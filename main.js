@@ -1,13 +1,25 @@
 const cheerio = require('cheerio');
 const electron = require('electron');
+const downloadManager = require("electron-download-manager");
 const { autoUpdater } = require('electron-updater');
 const { app, BrowserWindow, dialog, ipcMain, Menu, shell } = electron;
+const fs = require("fs");
 const isOnline = require('is-online');
 const path = require('path');
 const request = require('request');
+const unzip = require('unzipper');
 const url = require('url');
 
 let mainWindow;
+const downloadFolder = app.getPath('downloads') + '/bandcamp-desktop/';
+
+if(!fs.existsSync(downloadFolder)){
+  fs.mkdirSync(downloadFolder);
+}
+
+downloadManager.register({
+    downloadFolder: downloadFolder
+});
 
 app.setName('Bandcamp Desktop');
 app.allowRendererProcessReuse = true;
@@ -45,12 +57,15 @@ function createWindow(){
 
   autoUpdater.checkForUpdatesAndNotify();
 
+function openDialog(title, message){
+  const response = dialog.showMessageBox(mainWindow,
+  {
+    title: title,
+    message: message
+  });
+}
   function about(){
-    const response = dialog.showMessageBox(mainWindow,
-    {
-      title: 'Bandcamp Desktop - About',
-      message: 'Bandcamp Desktop is a crossplatform desktop application which allows you to use bandcamp.com in an easy and quick way.\n\nVersion: v' + app.getVersion() + '\nDeveloped by: Giulio De Matteis <giuliodematteis@icloud.com>\n\nBuilt using cheerio, electron framework, electron-builder, electron-updater, is-online, request and url packages with their dependecies.'
-    });
+    openDialog('Bandcamp Desktop - About', 'Bandcamp Desktop is a crossplatform desktop application which allows you to use bandcamp.com in an easy and quick way.\n\nVersion: v' + app.getVersion() + '\nDeveloped by: Giulio De Matteis <giuliodematteis@icloud.com>\n\nBuilt using cheerio, electron framework, electron-builder, electron-download-manager, electron-updater, fs, is-online, request, unzipper and url packages with their dependecies.');
   }
 
   function tag(tag){
@@ -134,6 +149,13 @@ function createWindow(){
                   player.setResizable(false);
                 }
               });
+          },
+        },
+        {
+          label: 'Library',
+          accelerator: process.platform == 'darwin' ? 'Command+L' : 'Ctrl+L',
+          click(){
+            shell.openPath(downloadFolder)
           }
         },
         { type: 'separator' },
@@ -151,7 +173,7 @@ function createWindow(){
       label: 'Search',
       submenu:[
         {
-          label: 'Filters',
+          label: 'Tags',
           submenu:[
             {
               label: 'Acoustic',
@@ -281,6 +303,18 @@ function createWindow(){
               }
             },
           ]
+        },
+        {
+          label: 'Filters',
+          accelerator: process.platform == 'darwin' ? 'Command+F' : 'Ctrl+F',
+          click(){
+            mainWindow.loadURL(require('url').format({
+              pathname: 'bandcamp.com',
+              hash: '#discover',
+              protocol: 'https:',
+              slashes: true
+            }));
+          }
         }
       ]
     },
@@ -328,8 +362,6 @@ function createWindow(){
         ...(isMac ? [
           { type: 'separator' },
           { role: 'front' },
-          /*{ type: 'separator' },
-          { role: 'window' }*/
         ] : [
           { role: 'close' }
         ])
@@ -368,9 +400,31 @@ const menu = Menu.buildFromTemplate(template)
   })
 
   mainWindow.webContents.on('will-navigate', (event, url) => {
-      if(!require('url').parse(url).hostname.includes('bandcamp.com')){
-        shell.openExternal(url)
-        event.preventDefault()
+    var domain = require('url').parse(url).hostname;
+      if(!domain.includes('bandcamp.com') && !domain.includes('bcbits.com')){
+        shell.openExternal(url);
+        event.preventDefault();
+      }else if(domain.includes('bcbits.com')){
+        openDialog('Bandcamp Desktop - Download Manager', 'Bandcamp Desktop is downloading and extracting your music...')
+        downloadManager.download({
+          url: url
+        }, function (error, info) {
+            if (error) {
+                console.log(error);
+                return;
+            }
+            console.log("DONE: " + info.url);
+            fs.readdir(downloadFolder, (err, files) => {
+              files.forEach(file => {
+                fs.createReadStream(downloadFolder + file).pipe(unzip.Extract({ path: downloadFolder }));
+                if(file.includes('.png') || file.includes('.zip')){
+                  fs.unlinkSync(downloadFolder + file);
+                }
+              });
+            });
+            openDialog('Bandcamp Desktop - Download Manager', 'The download is complete! You can find your music in File > Library');
+        });
+        event.preventDefault();
       }
   })
 
