@@ -2,10 +2,10 @@ const cheerio = require('cheerio');
 const electron = require('electron');
 const { autoUpdater } = require('electron-updater');
 const { app, BrowserWindow, dialog, ipcMain, Menu, shell } = electron;
+const isOnline = require('is-online');
 const path = require('path');
 const request = require('request');
 const url = require('url');
-const isOnline = require('is-online');
 
 let mainWindow;
 
@@ -101,11 +101,12 @@ function createWindow(){
 
                 if(id != ''){
                   player = new BrowserWindow({
-                                                width: 395,
+                                                width: 385,
                                                 height: 600,
                                                 center: true,
                                                 titleBarStyle: 'hidden',
-                                                frame: process.platform == 'darwin' ? false : true,
+                                                parent: mainWindow,
+                                                frame: process.platform == 'darwin' ? false : true
                                               });
 
                   const loadView = ({title,scriptUrl}) => {
@@ -365,6 +366,13 @@ const menu = Menu.buildFromTemplate(template)
   mainWindow.webContents.on('new-window', (event, url) => {
       event.preventDefault()
       mainWindow.loadURL(url)
+  })
+
+  mainWindow.webContents.on('will-navigate', (event, url) => {
+      if(!require('url').parse(url).hostname.includes('bandcamp.com')){
+        shell.openExternal(url)
+        event.preventDefault()
+      }
   })
 
   mainWindow.on('page-title-updated', (event) => {
