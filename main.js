@@ -16,8 +16,8 @@ app.on('ready', function(){
 
 function createWindow(){
   mainWindow = new BrowserWindow({
-                                    width: 1400,
-                                    height: 725,
+                                    width: 1200,
+                                    height: 700,
                                     center: true,
                                     titleBarStyle: 'hidden',
                                     frame: process.platform == 'darwin' ? false : true,
@@ -352,6 +352,10 @@ const menu = Menu.buildFromTemplate(template)
       event.preventDefault()
       mainWindow.loadURL(url)
   })
+
+  mainWindow.on('page-title-updated', (event) => {
+    event.preventDefault();
+  });
 
 }
 
