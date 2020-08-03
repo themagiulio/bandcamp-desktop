@@ -13,11 +13,15 @@ This version will be published as a Stable Release after some test and bug fixes
 - Simple as the website
 - Header menu
 - Mini Player
+- Directly download Music from Bandcamp
 
 ## Mini Player
 Keep listening to the music while you explore the website! That's the killer feature of this web application.
 
 It's very simple to use: just go to the album (or song, ep...) and click File > Mini Player (or press Ctrl + Space `v2.0.0` only).
+
+## Directly download Music from Bandcamp
+From `v2.0.0` Bandcamp Desktop is able to directly download music from Bandcamp. Your albums and songs will be automatically unzipped and stored in the `bandcamp-desktop` folder which is located in your default `download` folder.
 
 ## Build Instructions
 For `v2.0.0` and later:
