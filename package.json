@@ -22,6 +22,7 @@
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
     "electron-updater": "^4.3.4",
+    "is-online": "^8.4.0",
     "request": "^2.88.2",
     "url": "^0.11.0"
   },

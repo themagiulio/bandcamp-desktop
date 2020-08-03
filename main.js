@@ -5,13 +5,27 @@ const { app, BrowserWindow, dialog, ipcMain, Menu, shell } = electron;
 const path = require('path');
 const request = require('request');
 const url = require('url');
+const isOnline = require('is-online');
 
 let mainWindow;
 
 app.setName('Bandcamp Desktop');
 app.allowRendererProcessReuse = true;
 app.on('ready', function(){
-  createWindow();
+  (async () => {
+  	if(await isOnline() == false){
+      const options = {
+        type: 'error',
+        buttons: ['OK'],
+        title: 'Connection Error',
+        message: 'Bandcamp Desktop failed to connect to bandcamp.com',
+        detail: 'Check your internet connection and try to restart the application.'
+      };
+      dialog.showMessageBox(null, options)
+    }else{
+      createWindow();
+    }
+  })();
 });
 
 function createWindow(){
