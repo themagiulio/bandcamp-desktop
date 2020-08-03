@@ -49,7 +49,7 @@ function createWindow(){
     const response = dialog.showMessageBox(mainWindow,
     {
       title: 'Bandcamp Desktop - About',
-      message: 'Bandcamp Desktop is a crossplatform desktop application which allows you to use bandcamp.com in an easy and quick way.\n\nVersion: v' + app.getVersion() + '\nDeveloped by: Giulio De Matteis <giuliodematteis@icloud.com>\n\nBuilt using cheerio, electron framework, electron-builder, electron-updater, request and url packages with their dependecies.'
+      message: 'Bandcamp Desktop is a crossplatform desktop application which allows you to use bandcamp.com in an easy and quick way.\n\nVersion: v' + app.getVersion() + '\nDeveloped by: Giulio De Matteis <giuliodematteis@icloud.com>\n\nBuilt using cheerio, electron framework, electron-builder, electron-updater, is-online, request and url packages with their dependecies.'
     });
   }
 
@@ -325,7 +325,6 @@ function createWindow(){
       label: 'Window',
       submenu: [
         { role: 'minimize' },
-        { role: 'zoom' },
         ...(isMac ? [
           { type: 'separator' },
           { role: 'front' },
