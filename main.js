@@ -44,9 +44,7 @@ function createWindow(){
   mainWindow = new BrowserWindow({
                                     width: 1200,
                                     height: 700,
-                                    center: true,
-                                    titleBarStyle: 'hidden',
-                                    frame: process.platform == 'darwin' ? false : true,
+                                    center: true
                                   });
 
   mainWindow.loadURL(url.format({
@@ -118,10 +116,7 @@ function openDialog(title, message){
                   player = new BrowserWindow({
                                                 width: 385,
                                                 height: 600,
-                                                center: true,
-                                                titleBarStyle: 'hidden',
-                                                parent: mainWindow,
-                                                frame: process.platform == 'darwin' ? false : true
+                                                center: true
                                               });
 
                   const loadView = ({title,scriptUrl}) => {
@@ -351,6 +346,7 @@ function openDialog(title, message){
       submenu: [
         { role: 'reload' },
         { role: 'forcereload' },
+        { role: 'toggledevtools' },
         { type: 'separator' },
         { role: 'togglefullscreen' }
       ]
