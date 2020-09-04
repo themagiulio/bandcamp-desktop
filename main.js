@@ -9,6 +9,7 @@ const path = require('path');
 const request = require('request');
 const unzip = require('unzipper');
 const url = require('url');
+const windowStateKeeper = require('electron-window-state');
 
 let mainWindow;
 const downloadFolder = app.getPath('downloads') + '/bandcamp-desktop/';
@@ -41,12 +42,28 @@ app.on('ready', function(){
 });
 
 function createWindow(){
+  /*
   mainWindow = new BrowserWindow({
                                     width: 1200,
                                     height: 700,
                                     center: true
                                   });
+  */
 
+  let mainWindowState = windowStateKeeper({
+    defaultWidth: 1200,
+    defaultHeight: 700
+  });
+  
+  mainWindow = new BrowserWindow({
+    'x': mainWindowState.x,
+    'y': mainWindowState.y,
+    'width': mainWindowState.width,
+    'height': mainWindowState.height
+  });
+
+  mainWindowState.manage(mainWindow);
+    
   mainWindow.loadURL(url.format({
     pathname: 'bandcamp.com',
     protocol: 'https:',
