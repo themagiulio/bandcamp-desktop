@@ -3,7 +3,7 @@ Bandcamp Desktop is a crossplatform desktop application which allows you to use 
 
 Note that bandcamp Desktop is not affiliated with Bandcamp, it is only a fan-made, free and Open-Source project.
 
-# Imprtant announcement
+# Important announcement
 The whole software has been recoded in order to make a crossplatform app.
 The new version (`v2.0.0`) of Bandcamp Desktop is built using electron and that is really advantageous!
 

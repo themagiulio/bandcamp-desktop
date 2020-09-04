@@ -42,13 +42,6 @@ app.on('ready', function(){
 });
 
 function createWindow(){
-  /*
-  mainWindow = new BrowserWindow({
-                                    width: 1200,
-                                    height: 700,
-                                    center: true
-                                  });
-  */
 
   let mainWindowState = windowStateKeeper({
     defaultWidth: 1200,
@@ -80,7 +73,7 @@ function openDialog(title, message){
   });
 }
   function about(){
-    openDialog('Bandcamp Desktop - About', 'Bandcamp Desktop is a crossplatform desktop application which allows you to use bandcamp.com in an easy and quick way.\n\nVersion: v' + app.getVersion() + '\nDeveloped by: Giulio De Matteis <giuliodematteis@icloud.com>\n\nBuilt using cheerio, electron framework, electron-builder, electron-download-manager, electron-updater, fs, is-online, request, unzipper and url packages with their dependecies.');
+    openDialog('Bandcamp Desktop - About', 'Bandcamp Desktop is a crossplatform desktop application which allows you to use bandcamp.com in an easy and quick way.\n\nVersion: v' + app.getVersion() + '\nDeveloped by: Giulio De Matteis <giuliodematteis@icloud.com>\n\nBuilt using cheerio, electron framework, electron-builder, electron-download-manager, electron-updater, electron-window-state, fs, is-online, request, unzipper and url packages with their dependecies.');
   }
 
   function tag(tag){
