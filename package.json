@@ -1,13 +1,13 @@
 {
   "name": "bandcamp-desktop",
   "productName": "Bandcamp Desktop",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "bandcamp Desktop is a desktop application written by Giulio De Matteis.\r It allows you to use bandcamp.com in an easy and quick way.",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder build --mac --win --linux --publish never",
-    "deploy": "electron-builder build --mac --win --linux --ia32 --publish always"
+    "build": "electron-builder build -mwl --publish never",
+    "deploy": "electron-builder build -mwl --ia32 --publish always"
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
     "electron-download-manager": "^2.1.2",
+    "electron-progressbar": "^1.2.0",
     "electron-updater": "^4.3.4",
     "electron-window-state": "^5.0.3",
     "is-online": "^8.4.0",
@@ -31,7 +32,7 @@
   },
   "devDependencies": {
     "electron": "^10.1.1",
-    "electron-builder": "^22.8.0"
+    "electron-builder": "^21.2.0"
   },
   "build": {
     "directories": {

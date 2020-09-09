@@ -1,11 +1,12 @@
 const cheerio = require('cheerio');
 const electron = require('electron');
-const downloadManager = require("electron-download-manager");
+const downloadManager = require('electron-download-manager');
 const { autoUpdater } = require('electron-updater');
 const { app, BrowserWindow, dialog, ipcMain, Menu, shell } = electron;
-const fs = require("fs");
+const fs = require('fs');
 const isOnline = require('is-online');
 const path = require('path');
+const progressBar = require('electron-progressbar');
 const request = require('request');
 const unzip = require('unzipper');
 const url = require('url');
@@ -73,7 +74,7 @@ function openDialog(title, message){
   });
 }
   function about(){
-    openDialog('Bandcamp Desktop - About', 'Bandcamp Desktop is a crossplatform desktop application which allows you to use bandcamp.com in an easy and quick way.\n\nVersion: v' + app.getVersion() + '\nDeveloped by: Giulio De Matteis <giuliodematteis@icloud.com>\n\nBuilt using cheerio, electron framework, electron-builder, electron-download-manager, electron-updater, electron-window-state, fs, is-online, request, unzipper and url packages with their dependecies.');
+    openDialog('Bandcamp Desktop - About', 'Bandcamp Desktop is a crossplatform desktop application which allows you to use bandcamp.com in an easy and quick way.\n\nVersion: v' + app.getVersion() + '\nDeveloped by: Giulio De Matteis <giuliodematteis@icloud.com>\n\nBuilt using cheerio, electron framework, electron-builder, electron-download-manager, electron-progressbar, electron-updater, electron-window-state, fs, is-online, request, unzipper and url packages with their dependecies.');
   }
 
   function tag(tag){
@@ -129,7 +130,7 @@ function openDialog(title, message){
                                                 center: true
                                               });
 
-                  const loadView = ({title,scriptUrl}) => {
+                  const loadView = ({title}) => {
                     return (`
                       <!DOCTYPE html>
                       <html>
@@ -157,6 +158,155 @@ function openDialog(title, message){
           },
         },
         {
+          label: 'Search',
+          submenu:[
+            {
+              label: 'Tags',
+              submenu:[
+                {
+                  label: 'Acoustic',
+                  click(){
+                    tag('acoustic');
+                  }
+                },
+                {
+                  label: 'Alternative',
+                  click(){
+                    tag('alternative');
+                  }
+                },
+                {
+                  label: 'Alternative Rock',
+                  click(){
+                    tag('alternative-rock');
+                  }
+                },
+                {
+                  label: 'Ambient',
+                  click(){
+                    tag('ambient');
+                  }
+                },
+                {
+                  label: 'Electronic',
+                  click(){
+                    tag('electronic');
+                  }
+                },
+                {
+                  label: 'Experimental',
+                  click(){
+                    tag('experimental');
+                  }
+                },
+                {
+                  label: 'Folk',
+                  click(){
+                    tag('folk');
+                  }
+                },
+                {
+                  label: 'Hip-Hop',
+                  click(){
+                    tag('hip-hop');
+                  }
+                },
+                {
+                  label: 'House',
+                  click(){
+                    tag('house');
+                  }
+                },
+                {
+                  label: 'Indie',
+                  click(){
+                    tag('indie');
+                  }
+                },
+                {
+                  label: 'Indie Rock',
+                  click(){
+                    tag('indie-rock');
+                  }
+                },
+                {
+                  label: 'Jazz',
+                  click(){
+                    tag('jazz');
+                  }
+                },
+                {
+                  label: 'Metal',
+                  click(){
+                    tag('metal');
+                  }
+                },
+                {
+                  label: 'Noise',
+                  click(){
+                    tag('noise');
+                  }
+                },
+                {
+                  label: 'Pop',
+                  click(){
+                    tag('pop');
+                  }
+                },
+                {
+                  label: 'Punk',
+                  click(){
+                    tag('punk');
+                  }
+                },
+                {
+                  label: 'Rap',
+                  click(){
+                    tag('rap');
+                  }
+                },
+                {
+                  label: 'Rock',
+                  click(){
+                    tag('rock');
+                  }
+                },
+                {
+                  label: 'Ska Punk',
+                  click(){
+                    tag('ska-punk');
+                  }
+                },
+                {
+                  label: 'Techno',
+                  click(){
+                    tag('Techno');
+                  }
+                },
+                { type: 'separator' },
+                {
+                  label: 'More...',
+                  click(){
+                    tag('');
+                  }
+                },
+              ]
+            },
+            {
+              label: 'Filters',
+              accelerator: process.platform == 'darwin' ? 'Command+F' : 'Ctrl+F',
+              click(){
+                mainWindow.loadURL(require('url').format({
+                  pathname: 'bandcamp.com',
+                  hash: '#discover',
+                  protocol: 'https:',
+                  slashes: true
+                }));
+              }
+            }
+          ]
+        },
+        {
           label: 'Library',
           accelerator: process.platform == 'darwin' ? 'Command+L' : 'Ctrl+L',
           click(){
@@ -172,155 +322,6 @@ function openDialog(title, message){
           }
         },
         isMac ? { role: 'close', accelerator: 'Command+Q', } : { role: 'quit', accelerator: 'Ctrl+Q', }
-      ]
-    },
-    {
-      label: 'Search',
-      submenu:[
-        {
-          label: 'Tags',
-          submenu:[
-            {
-              label: 'Acoustic',
-              click(){
-                tag('acoustic');
-              }
-            },
-            {
-              label: 'Alternative',
-              click(){
-                tag('alternative');
-              }
-            },
-            {
-              label: 'Alternative Rock',
-              click(){
-                tag('alternative-rock');
-              }
-            },
-            {
-              label: 'Ambient',
-              click(){
-                tag('ambient');
-              }
-            },
-            {
-              label: 'Electronic',
-              click(){
-                tag('electronic');
-              }
-            },
-            {
-              label: 'Experimental',
-              click(){
-                tag('experimental');
-              }
-            },
-            {
-              label: 'Folk',
-              click(){
-                tag('folk');
-              }
-            },
-            {
-              label: 'Hip-Hop',
-              click(){
-                tag('hip-hop');
-              }
-            },
-            {
-              label: 'House',
-              click(){
-                tag('house');
-              }
-            },
-            {
-              label: 'Indie',
-              click(){
-                tag('indie');
-              }
-            },
-            {
-              label: 'Indie Rock',
-              click(){
-                tag('indie-rock');
-              }
-            },
-            {
-              label: 'Jazz',
-              click(){
-                tag('jazz');
-              }
-            },
-            {
-              label: 'Metal',
-              click(){
-                tag('metal');
-              }
-            },
-            {
-              label: 'Noise',
-              click(){
-                tag('noise');
-              }
-            },
-            {
-              label: 'Pop',
-              click(){
-                tag('pop');
-              }
-            },
-            {
-              label: 'Punk',
-              click(){
-                tag('punk');
-              }
-            },
-            {
-              label: 'Rap',
-              click(){
-                tag('rap');
-              }
-            },
-            {
-              label: 'Rock',
-              click(){
-                tag('rock');
-              }
-            },
-            {
-              label: 'Ska Punk',
-              click(){
-                tag('ska-punk');
-              }
-            },
-            {
-              label: 'Techno',
-              click(){
-                tag('Techno');
-              }
-            },
-            { type: 'separator' },
-            {
-              label: 'More...',
-              click(){
-                tag('');
-              }
-            },
-          ]
-        },
-        {
-          label: 'Filters',
-          accelerator: process.platform == 'darwin' ? 'Command+F' : 'Ctrl+F',
-          click(){
-            mainWindow.loadURL(require('url').format({
-              pathname: 'bandcamp.com',
-              hash: '#discover',
-              protocol: 'https:',
-              slashes: true
-            }));
-          }
-        }
       ]
     },
     {
@@ -411,24 +412,70 @@ const menu = Menu.buildFromTemplate(template)
         shell.openExternal(url);
         event.preventDefault();
       }else if(domain.includes('bcbits.com')){
-        openDialog('Bandcamp Desktop - Download Manager', 'Bandcamp Desktop is downloading and extracting your music...')
+
+
+        var downloadBar = new progressBar({
+          title: 'Bandcamp Desktop - Download Manager',
+          text: 'Bandcamp Desktop is downloading and extracting your music...',
+          closeOnComplete: false,
+          browserWindow: {
+            modal: true,
+            closable: true,
+            webPreferences: {
+                nodeIntegration: true
+            }
+          }
+        });
+
+        downloadBar
+        .on('completed', function() {
+          downloadBar.detail = 'The download is complete! You can find your music in File > Library';
+          downloadBar.text = 'Download completed';
+        })
+        .on('aborted', function(value) {
+          const response = dialog.showMessageBox(mainWindow,
+            {
+              type: 'error',
+              title: 'Bandcamp Desktop - Download Manager',
+              message: "There was an error and Bandcamp Desktop couldn't download your music."
+            });
+        })
+        
         downloadManager.download({
           url: url
         }, function (error, info) {
             if (error) {
-                console.log(error);
-                return;
+              downloadBar.close();
+              return;
             }
-            console.log("DONE: " + info.url);
+            
             fs.readdir(downloadFolder, (err, files) => {
+              
               files.forEach(file => {
-                fs.createReadStream(downloadFolder + file).pipe(unzip.Extract({ path: downloadFolder }));
-                if(file.includes('.png') || file.includes('.zip')){
-                  fs.unlinkSync(downloadFolder + file);
+                var filePath = path.join(downloadFolder, file)
+                let folderPath;
+                const stat = fs.lstatSync(filePath);
+
+                if(stat.isFile()){
+                  
+                  if(file.includes('.zip')){
+                    folderPath = path.join(downloadFolder, file.replace('.zip',''));
+                    if(!fs.existsSync(folderPath)){
+                      fs.mkdirSync(folderPath);
+                    }
+                  }
+                  
+                  fs.createReadStream(downloadFolder + file).pipe(unzip.Extract({ path: `${downloadFolder}/${file.replace('.zip','')}` }));
+                  if(file.includes('.png') || file.includes('.zip')){
+                    fs.unlinkSync(downloadFolder + file);
+                  }
+
                 }
               });
             });
-            openDialog('Bandcamp Desktop - Download Manager', 'The download is complete! You can find your music in File > Library');
+              
+            downloadBar.setCompleted();
+
         });
         event.preventDefault();
       }
