@@ -1,7 +1,7 @@
 {
   "name": "bandcamp-desktop",
   "productName": "Bandcamp Desktop",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "bandcamp Desktop is a desktop application written by Giulio De Matteis.\r It allows you to use bandcamp.com in an easy and quick way.",
   "main": "main.js",
   "scripts": {
@@ -23,6 +23,7 @@
     "cheerio": "^1.0.0-rc.3",
     "electron-download-manager": "^2.1.2",
     "electron-progressbar": "^1.2.0",
+    "electron-store": "^6.0.1",
     "electron-updater": "^4.3.4",
     "electron-window-state": "^5.0.3",
     "is-online": "^8.4.0",
@@ -45,7 +46,7 @@
     },
     "mac": {
       "icon": "bandcamp-logo.icns",
-      "target": "dmg"
+      "target": "tar.gz"
     },
     "linux": {
       "icon": "bandcamp-logo.png",

@@ -1,5 +1,6 @@
 const cheerio = require('cheerio');
 const electron = require('electron');
+const electonStore = require('electron-store');
 const downloadManager = require('electron-download-manager');
 const { autoUpdater } = require('electron-updater');
 const { app, BrowserWindow, dialog, ipcMain, Menu, shell } = electron;
@@ -13,6 +14,7 @@ const url = require('url');
 const windowStateKeeper = require('electron-window-state');
 
 let mainWindow;
+const store = new electonStore();
 const downloadFolder = app.getPath('downloads') + '/bandcamp-desktop/';
 
 if(!fs.existsSync(downloadFolder)){
@@ -74,7 +76,7 @@ function openDialog(title, message){
   });
 }
   function about(){
-    openDialog('Bandcamp Desktop - About', 'Bandcamp Desktop is a crossplatform desktop application which allows you to use bandcamp.com in an easy and quick way.\n\nVersion: v' + app.getVersion() + '\nDeveloped by: Giulio De Matteis <giuliodematteis@icloud.com>\n\nBuilt using cheerio, electron framework, electron-builder, electron-download-manager, electron-progressbar, electron-updater, electron-window-state, fs, is-online, request, unzipper and url packages with their dependecies.');
+    openDialog('Bandcamp Desktop - About', 'Bandcamp Desktop is a crossplatform desktop application which allows you to use bandcamp.com in an easy and quick way.\n\nVersion: v' + app.getVersion() + '\nDeveloped by: Giulio De Matteis <giuliodematteis@icloud.com>\n\nBuilt using cheerio, electron framework, electron-builder, electron-download-manager, electron-progressbar, electron-store, electron-updater, electron-window-state, fs, is-online, request, unzipper and url packages with their dependecies.');
   }
 
   function tag(tag){
@@ -114,46 +116,82 @@ function openDialog(title, message){
           label: 'Mini Player',
           accelerator: process.platform == 'darwin' ? 'Command+Space' : 'Ctrl+Space',
           click(){
+            let webPageUrl = mainWindow.webContents.getURL();
+
+            if(webPageUrl !== 'https://bandcamp.com/')
             request({
-                uri: mainWindow.webContents.getURL(),
+                uri: webPageUrl,
                 }, function(error, response, body) {
-
-                var $ = cheerio.load(body);
-                var meta = $('meta');
-                var title = $('title').text();
-                var id = meta[20]['attribs']['content'].replace('https://bandcamp.com/EmbeddedPlayer/v=2/album=', '').replace('/size=large/tracklist=false/artwork=small/', '');
-
-                if(id != ''){
+                
+                const $ = cheerio.load(body);
+                if(store.get('bandCampDesktopPlayer') === undefined || store.get('bandCampDesktopPlayer') === true){
+                  const scripts = $('script');
+                  const trackInfo = JSON.parse(scripts[3]['attribs']['data-tralbum'])['trackinfo'];
                   player = new BrowserWindow({
-                                                width: 385,
-                                                height: 600,
-                                                center: true
-                                              });
-
-                  const loadView = ({title}) => {
-                    return (`
-                      <!DOCTYPE html>
-                      <html>
-                        <head>
-                          <title>${title}</title>
-                          <meta charset="UTF-8">
-                        </head>
-                        <body>
-                          <iframe style="border: 0; width: 350px; height: 600px;" src="https://bandcamp.com/EmbeddedPlayer/album=${id}/size=large/bgcol=ffffff/tracklist=true/transparent=true/" seamless>
-                          </iframe>
-                        </body>
-                      </html>
-                    `)
-                  }
-
-                  var file = 'data:text/html;charset=UTF-8,' + encodeURIComponent(loadView({
+                    width: 385,
+                    height: 600,
+                    center: true,
+                    webPreferences: {
+                      nodeIntegration: true
+                    }
+                  });
+  
+                  var title = $('title').text();
+  
+                  let tracks = {
                     title: title,
+                    tracks: trackInfo
+                  }
+  
+                  player.loadURL(url.format({
+                    pathname: path.join(__dirname, 'player.html'),
+                    protocol: 'file:',
+                    slashes: true
                   }));
-
-                  player.loadURL(file);
                   player.setMenu(null);
                   player.setResizable(false);
+  
+                  setTimeout(() => {
+                    player.webContents.send('getTracks', tracks);
+                  }, 2000) 
+                }else{
+                  var meta = $('meta');
+                  var title = $('title').text();
+                  var id = meta[20]['attribs']['content'].replace('https://bandcamp.com/EmbeddedPlayer/v=2/album=', '').replace('/size=large/tracklist=false/artwork=small/', '');
+  
+                  if(id != ''){
+                    player = new BrowserWindow({
+                                                  width: 385,
+                                                  height: 600,
+                                                  center: true
+                                                });
+  
+                    const loadView = ({title}) => {
+                      return (`
+                        <!DOCTYPE html>
+                        <html>
+                          <head>
+                            <title>${title}</title>
+                            <meta charset="UTF-8">
+                          </head>
+                          <body>
+                            <iframe style="border: 0; width: 350px; height: 600px;" src="https://bandcamp.com/EmbeddedPlayer/album=${id}/size=large/bgcol=ffffff/tracklist=true/transparent=true/" seamless>
+                            </iframe>
+                          </body>
+                        </html>
+                      `)
+                    }
+  
+                    var file = 'data:text/html;charset=UTF-8,' + encodeURIComponent(loadView({
+                      title: title,
+                    }));
+  
+                    player.loadURL(file);
+                    player.setMenu(null);
+                    player.setResizable(false);
+                  }
                 }
+
               });
           },
         },
@@ -311,6 +349,18 @@ function openDialog(title, message){
           accelerator: process.platform == 'darwin' ? 'Command+L' : 'Ctrl+L',
           click(){
             shell.openPath(downloadFolder)
+          }
+        },
+        {
+          label: 'Bandcamp Desktop Player',
+          type: 'checkbox',
+          checked: store.get('bandCampDesktopPlayer') === undefined ? true : store.get('bandCampDesktopPlayer'),
+          click(){
+            if(store.get('bandCampDesktopPlayer') === undefined){
+              store.set('bandCampDesktopPlayer', false)
+            }else{
+              store.set('bandCampDesktopPlayer', !store.get('bandCampDesktopPlayer'))
+            }
           }
         },
         { type: 'separator' },
