@@ -126,7 +126,13 @@ function openDialog(title, message){
                 const $ = cheerio.load(body);
                 if(store.get('bandCampDesktopPlayer') === undefined || store.get('bandCampDesktopPlayer') === true){
                   const scripts = $('script');
-                  const trackInfo = JSON.parse(scripts[3]['attribs']['data-tralbum'])['trackinfo'];
+                  const imgs = $('img');
+                  const data = JSON.parse(scripts[3]['attribs']['data-tralbum']);
+
+                  const trackInfo = data['trackinfo'];
+
+                  console.log(trackInfo)
+
                   player = new BrowserWindow({
                     width: 385,
                     height: 600,
@@ -143,6 +149,11 @@ function openDialog(title, message){
                     tracks: trackInfo
                   }
   
+                  let album = {
+                    title: data['current']['title'],
+                    artist: data['artist']
+                  }
+
                   player.loadURL(url.format({
                     pathname: path.join(__dirname, 'player.html'),
                     protocol: 'file:',
@@ -152,7 +163,7 @@ function openDialog(title, message){
                   player.setResizable(false);
   
                   setTimeout(() => {
-                    player.webContents.send('playerConfig', tracks, store.get('volume'));
+                    player.webContents.send('playerConfig', tracks, album, store.get('volume'));
                   }, 1000) 
 
                 }else{

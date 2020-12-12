@@ -15,27 +15,36 @@
             <audio style="margin: 20px;"id="player" controls controlsList="nodownload">
                 <source id="playerSource" src=""></source>
             </audio>
-            <ul id="tracks" class="list-group list-group-flush">
-            </ul>
+            <br>
+            <b id="albumTitle"></b>
+            by <span id="albumArtist"></span>
+            <br><br>
         </center>
+        <ul id="tracks" class="list-group list-group-flush">
+        </ul>
     </body>
     <script>
         const { ipcRenderer } = require('electron')
         const list = document.getElementById('tracks');
         const player = document.getElementById('player');
         const playerSource = document.getElementById('playerSource');
+        const albumTitle = document.getElementById('albumTitle');
+        const albumArtist = document.getElementById('albumArtist');
+        let currentSong;
 
-        ipcRenderer.on('playerConfig', function (event, tracks, volume){
+        ipcRenderer.on('playerConfig', function (event, tracks, album, volume){
             document.title = tracks.title;
+            albumTitle.innerHTML = album.title;
+            albumArtist.innerHTML = album.artist;
             playerSource.src = tracks['tracks'][0]['file']['mp3-128'];
             player.load();
-            tracks['tracks'].forEach(e => {
+            tracks['tracks'].forEach((e, i) => {
                 var track = document.createElement('li');
                 track.classList.add('list-group-item');
                 var trackLink = document.createElement('a');
                 trackLink.href = "#";
                 trackLink.setAttribute('data-value', e['file']['mp3-128']);
-                trackLink.innerHTML = e['title'];
+                trackLink.innerHTML = `${i+1}. ${e['title']} <span style="position: absolute; right: 20px;">${new Date(e['duration'] * 1000).toISOString().substr(14, 5)}</span>`;
 
                 track.appendChild(trackLink);
                 list.appendChild(track);
@@ -47,8 +56,13 @@
 
         list.onclick = function(e) {
             e.preventDefault();
-
             var elm = e.target;
+            if(currentSong == undefined){
+                currentSong = elm;
+            }
+            currentSong.style.fontWeight = 400;
+            currentSong = elm;
+            elm.style.fontWeight = 900;
             playerSource.src = elm.getAttribute('data-value');
             player.load();
             player.play();
