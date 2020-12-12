@@ -25,7 +25,7 @@
         const player = document.getElementById('player');
         const playerSource = document.getElementById('playerSource');
 
-        ipcRenderer.on('getTracks', function (event, tracks){
+        ipcRenderer.on('playerConfig', function (event, tracks, volume){
             document.title = tracks.title;
             playerSource.src = tracks['tracks'][0]['file']['mp3-128'];
             player.load();
@@ -40,6 +40,9 @@
                 track.appendChild(trackLink);
                 list.appendChild(track);
             })
+            if(volume !== undefined){
+                player.volume = volume;
+            }
         })
 
         list.onclick = function(e) {
@@ -50,6 +53,10 @@
             player.load();
             player.play();
         }
+
+        player.onvolumechange = function() {
+            ipcRenderer.send('setVolume', player.volume);
+        }; 
 
     </script>
 </html>

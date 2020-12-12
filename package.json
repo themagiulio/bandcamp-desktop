@@ -1,7 +1,7 @@
 {
   "name": "bandcamp-desktop",
   "productName": "Bandcamp Desktop",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "bandcamp Desktop is a desktop application written by Giulio De Matteis.\r It allows you to use bandcamp.com in an easy and quick way.",
   "main": "main.js",
   "scripts": {
