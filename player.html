@@ -80,11 +80,14 @@
         };
 
         player.addEventListener('ended', function () {
-            currentSong.style.fontWeight = 400;
             var index = parseInt(currentSong.getAttribute('index')) + 1;
+            currentSong.style.fontWeight = 400; 
+            if(document.querySelector(`[index="${index}"]`) === null){
+                index = 0;
+            }
             currentSong = document.querySelector(`[index="${index}"]`);
-            currentSong.style.fontWeight = 900;
             playerSource.src = tracksList['tracks'][index]['file']['mp3-128'];
+            currentSong.style.fontWeight = 900;
             player.load();
             player.play();
         }, false);
