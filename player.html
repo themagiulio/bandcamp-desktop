@@ -34,9 +34,11 @@
         const albumTitle = document.getElementById('albumTitle');
         const albumArtist = document.getElementById('albumArtist');
         let currentSong;
+        let tracksList;
 
         ipcRenderer.on('playerConfig', function (event, tracks, album, volume){
             document.title = tracks.title;
+            tracksList = tracks;
             albumTitle.innerHTML = album.title;
             albumArtist.innerHTML = album.artist;
             albumInfo.hidden = false;
@@ -48,9 +50,14 @@
                 var trackLink = document.createElement('a');
                 trackLink.href = "#";
                 trackLink.setAttribute('data-value', e['file']['mp3-128']);
+                trackLink.setAttribute('index', i);
                 trackLink.innerHTML = `${i+1}. ${e['title']} <span style="position: absolute; right: 20px;">${new Date(e['duration'] * 1000).toISOString().substr(14, 5)}</span>`;
                 track.appendChild(trackLink);
                 list.appendChild(track);
+                if(i === 0){
+                    currentSong = trackLink;
+                    currentSong.style.fontWeight = 900;
+                }
             })
             if(volume !== undefined){
                 player.volume = volume;
@@ -60,9 +67,6 @@
         list.onclick = function(e) {
             e.preventDefault();
             var elm = e.target;
-            if(currentSong == undefined){
-                currentSong = elm;
-            }
             currentSong.style.fontWeight = 400;
             currentSong = elm;
             elm.style.fontWeight = 900;
@@ -73,7 +77,17 @@
 
         player.onvolumechange = function() {
             ipcRenderer.send('setVolume', player.volume);
-        }; 
+        };
+
+        player.addEventListener('ended', function () {
+            currentSong.style.fontWeight = 400;
+            var index = parseInt(currentSong.getAttribute('index')) + 1;
+            currentSong = document.querySelector(`[index="${index}"]`);
+            currentSong.style.fontWeight = 900;
+            playerSource.src = tracksList['tracks'][index]['file']['mp3-128'];
+            player.load();
+            player.play();
+        }, false);
 
     </script>
 </html>
