@@ -16,8 +16,10 @@
                 <source id="playerSource" src=""></source>
             </audio>
             <br>
-            <b id="albumTitle"></b>
-            by <span id="albumArtist"></span>
+            <div id="albumInfo" hidden>
+                <b id="albumTitle"></b>
+                by <span id="albumArtist"></span>
+            </div>
             <br><br>
         </center>
         <ul id="tracks" class="list-group list-group-flush">
@@ -28,6 +30,7 @@
         const list = document.getElementById('tracks');
         const player = document.getElementById('player');
         const playerSource = document.getElementById('playerSource');
+        const albumInfo = document.getElementById('albumInfo')
         const albumTitle = document.getElementById('albumTitle');
         const albumArtist = document.getElementById('albumArtist');
         let currentSong;
@@ -36,6 +39,7 @@
             document.title = tracks.title;
             albumTitle.innerHTML = album.title;
             albumArtist.innerHTML = album.artist;
+            albumInfo.hidden = false;
             playerSource.src = tracks['tracks'][0]['file']['mp3-128'];
             player.load();
             tracks['tracks'].forEach((e, i) => {
@@ -45,7 +49,6 @@
                 trackLink.href = "#";
                 trackLink.setAttribute('data-value', e['file']['mp3-128']);
                 trackLink.innerHTML = `${i+1}. ${e['title']} <span style="position: absolute; right: 20px;">${new Date(e['duration'] * 1000).toISOString().substr(14, 5)}</span>`;
-
                 track.appendChild(trackLink);
                 list.appendChild(track);
             })

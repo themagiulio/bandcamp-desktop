@@ -61,7 +61,7 @@ function createWindow(){
   mainWindowState.manage(mainWindow);
     
   mainWindow.loadURL(url.format({
-    pathname: 'backyardsuperheroes.bandcamp.com/album/lets-get-elfed-up',
+    pathname: 'bandcamp.com',
     protocol: 'https:',
     slashes: true
   }));
@@ -126,12 +126,10 @@ function openDialog(title, message){
                 const $ = cheerio.load(body);
                 if(store.get('bandCampDesktopPlayer') === undefined || store.get('bandCampDesktopPlayer') === true){
                   const scripts = $('script');
-                  const imgs = $('img');
+                  //const imgs = $('img');
                   const data = JSON.parse(scripts[3]['attribs']['data-tralbum']);
 
                   const trackInfo = data['trackinfo'];
-
-                  console.log(trackInfo)
 
                   player = new BrowserWindow({
                     width: 385,
