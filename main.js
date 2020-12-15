@@ -61,7 +61,7 @@ function createWindow(){
   mainWindowState.manage(mainWindow);
     
   mainWindow.loadURL(url.format({
-    pathname: 'planetsmashers.bandcamp.com/album/too-much-information-2',
+    pathname: 'bandcamp.com',
     protocol: 'https:',
     slashes: true
   }));
@@ -118,8 +118,10 @@ function openDialog(title, message){
           click(){
             let webPageUrl = mainWindow.webContents.getURL();
 
-            if(webPageUrl !== 'https://bandcamp.com/')
-            request({
+            var subdomain =  webPageUrl.split('.')[1].replace('https://','') ? webPageUrl.split('.')[0].replace('https://','') : false;
+
+            if(subdomain !== 'bandcamp' && subdomain !== 'daily'){
+              request({
                 uri: webPageUrl,
                 }, function(error, response, body) {
                 
@@ -203,6 +205,9 @@ function openDialog(title, message){
                 }
 
               });
+            }else{
+              openDialog('Bandcamp Desktop - Error', 'Mini Player can be opened only in album pages.')
+            }
           },
         },
         {
