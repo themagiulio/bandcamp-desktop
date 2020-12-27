@@ -15,7 +15,7 @@ const windowStateKeeper = require('electron-window-state');
 
 let mainWindow;
 const store = new electonStore();
-const downloadFolder = app.getPath('downloads') + '/bandcamp-desktop/';
+let downloadFolder = store.get('downloadFolder') === undefined ? app.getPath('downloads') + '/bandcamp-desktop/' : store.get('downloadFolder');
 
 if(!fs.existsSync(downloadFolder)){
   fs.mkdirSync(downloadFolder);
@@ -366,17 +366,42 @@ function openDialog(title, message){
             shell.openPath(downloadFolder)
           }
         },
+        { type: 'separator' },
         {
-          label: 'Bandcamp Desktop Player',
-          type: 'checkbox',
-          checked: store.get('bandCampDesktopPlayer') === undefined ? true : store.get('bandCampDesktopPlayer'),
-          click(){
-            if(store.get('bandCampDesktopPlayer') === undefined){
-              store.set('bandCampDesktopPlayer', false)
-            }else{
-              store.set('bandCampDesktopPlayer', !store.get('bandCampDesktopPlayer'))
+          label: 'Preferences',
+          submenu: [
+            {
+              label: 'Bandcamp Desktop Player',
+              accelerator: 'Shift+B',
+              type: 'checkbox',
+              checked: store.get('bandCampDesktopPlayer') === undefined ? true : store.get('bandCampDesktopPlayer'),
+              click(){
+                if(store.get('bandCampDesktopPlayer') === undefined){
+                  store.set('bandCampDesktopPlayer', false)
+                }else{
+                  store.set('bandCampDesktopPlayer', !store.get('bandCampDesktopPlayer'))
+                }
+              }
+            },
+            {
+              label: 'Change Library Folder Location',
+              accelerator: 'Shift+L',
+              click(){
+                dialog.showOpenDialog(mainWindow, {
+                      properties:
+                        ['openDirectory']
+                    }
+                )
+                .then(results => {
+                  if(!results.canceled){
+                    const newDownloadFolder = results.filePaths[0] + '/';
+                    store.set('downloadFolder', newDownloadFolder);
+                    downloadFolder = newDownloadFolder;
+                  }
+                })
+              }
             }
-          }
+          ]
         },
         { type: 'separator' },
         {

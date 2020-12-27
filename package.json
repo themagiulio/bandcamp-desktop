@@ -1,12 +1,12 @@
 {
   "name": "bandcamp-desktop",
   "productName": "Bandcamp Desktop",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "description": "Bandcamp Desktop is a crossplatform desktop application. It allows you to use bandcamp.com in an easy and quick way. Keep listening to music while you explore the website.",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder build -mwl --publish never",
+    "build": "electron-builder build -l --publish never",
     "deploy": "electron-builder build -mwl --ia32 --publish always"
   },
   "repository": {
