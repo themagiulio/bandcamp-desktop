@@ -61,7 +61,7 @@ function createWindow(){
   mainWindowState.manage(mainWindow);
     
   mainWindow.loadURL(url.format({
-    pathname: 'planetsmashers.bandcamp.com/album/too-much-information-2',
+    pathname: 'bandcamp.com',
     protocol: 'https:',
     slashes: true
   }));
