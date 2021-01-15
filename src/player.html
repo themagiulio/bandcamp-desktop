@@ -8,14 +8,23 @@
             audio:focus {
                 outline:0px;
             }
+            audio::-webkit-media-controls-play-button {
+                display: none !important;
+            }
+            body, .list-group-item {
+                background-color: #f0f3f4;
+            }
         </style>
     </head>
     <body>
-        <center>
-            <audio style="margin: 20px;"id="player" controls controlsList="nodownload">
+        <center style="margin-top: 20px;">
+            <button id="rewindBtn" type="button" class="btn"><img src="icons/rewind.png"/></button>
+            <button id="playBtn" type="button" class="btn btn-link"><img id="playBtnImg" src="icons/play.png"/></button>
+            <button id="forwardBtn" type="button" class="btn"><img src="icons/forward.png"/></button>
+            <audio id="player" style="padding-top: 5px" controls controlsList="nodownload">
                 <source id="playerSource" src=""></source>
             </audio>
-            <br>
+            <br><br>
             <div id="albumInfo" hidden>
                 <b id="albumTitle"></b>
                 by <span id="albumArtist"></span>
@@ -33,8 +42,30 @@
         const albumInfo = document.getElementById('albumInfo')
         const albumTitle = document.getElementById('albumTitle');
         const albumArtist = document.getElementById('albumArtist');
+        const playBtn = document.getElementById('playBtn');
+        const playBtnImg = document.getElementById('playBtnImg');
+        const rewindBtn = document.getElementById('rewindBtn');
+        const forwardBtn = document.getElementById('forwardBtn');
         let currentSong;
         let tracksList;
+
+        function playSong(isForward = true){
+            playBtnImg.setAttribute('src', 'icons/pause.png');
+            if(isForward){
+                var index = parseInt(currentSong.getAttribute('index')) + 1;
+            }else{
+                var index = parseInt(currentSong.getAttribute('index')) - 1;
+            }
+            currentSong.style.fontWeight = 400; 
+            if(document.querySelector(`[index="${index}"]`) === null){
+                index = 0;
+            }
+            currentSong = document.querySelector(`[index="${index}"]`);
+            playerSource.src = tracksList['tracks'][index]['file']['mp3-128'];
+            currentSong.style.fontWeight = 900;
+            player.load();
+            player.play();
+        }
 
         ipcRenderer.on('playerConfig', function (event, tracks, album, volume){
             document.title = tracks.title;
@@ -71,6 +102,7 @@
             currentSong = elm;
             elm.style.fontWeight = 900;
             playerSource.src = elm.getAttribute('data-value');
+            playBtnImg.setAttribute('src', 'icons/pause.png');
             player.load();
             player.play();
         }
@@ -79,18 +111,22 @@
             ipcRenderer.send('setVolume', player.volume);
         };
 
-        player.addEventListener('ended', function () {
-            var index = parseInt(currentSong.getAttribute('index')) + 1;
-            currentSong.style.fontWeight = 400; 
-            if(document.querySelector(`[index="${index}"]`) === null){
-                index = 0;
+        player.addEventListener('ended', playSong, false);
+
+        playBtn.onclick = function(e) {
+            if(player.paused){
+                playBtnImg.setAttribute('src', 'icons/pause.png');
+                player.play();
+            }else{
+                playBtnImg.setAttribute('src', 'icons/play.png');
+                player.pause();
             }
-            currentSong = document.querySelector(`[index="${index}"]`);
-            playerSource.src = tracksList['tracks'][index]['file']['mp3-128'];
-            currentSong.style.fontWeight = 900;
-            player.load();
-            player.play();
-        }, false);
+        }
+
+        forwardBtn.onclick = playSong;
+        rewindBtn.onclick = () => {
+            playSong(false);
+        };
 
     </script>
 </html>
