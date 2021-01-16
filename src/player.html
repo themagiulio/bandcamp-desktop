@@ -132,7 +132,12 @@
 
         forwardBtn.onclick = playSong;
         rewindBtn.onclick = () => {
-            playSong(false);
+            const currentTime = player.currentTime;
+            if(currentTime > 10){
+                player.currentTime = 0;
+            }else{
+                playSong(false);
+            }
         };
 
     </script>
