@@ -14,12 +14,19 @@
             body, .list-group-item {
                 background-color: #f0f3f4;
             }
+            .btn:hover {
+                background-color: #c1c2c3;
+            }
+            .btn:focus {
+                outline: none;
+                box-shadow: none;
+            }
         </style>
     </head>
     <body>
         <center style="margin-top: 20px;">
             <button id="rewindBtn" type="button" class="btn"><img src="icons/rewind.png"/></button>
-            <button id="playBtn" type="button" class="btn btn-link"><img id="playBtnImg" src="icons/play.png"/></button>
+            <button id="playBtn" type="button" class="btn"><img id="playBtnImg" src="icons/play.png"/></button>
             <button id="forwardBtn" type="button" class="btn"><img src="icons/forward.png"/></button>
             <audio id="player" style="padding-top: 5px" controls controlsList="nodownload">
                 <source id="playerSource" src=""></source>
