@@ -68,13 +68,14 @@ function createWindow(){
 
   autoUpdater.checkForUpdatesAndNotify();
 
-function openDialog(title, message){
-  const response = dialog.showMessageBox(mainWindow,
-  {
-    title: title,
-    message: message
-  });
-}
+  function openDialog(title, message){
+    const response = dialog.showMessageBox(mainWindow,
+    {
+      title: title,
+      message: message
+    });
+  }
+
   function about(){
     openDialog('Bandcamp Desktop - About', 'Bandcamp Desktop is a crossplatform desktop application which allows you to use bandcamp.com in an easy and quick way.\n\nVersion: v' + app.getVersion() + '\nDeveloped by: Giulio De Matteis <giuliodematteis@icloud.com>\n\nBuilt using cheerio, electron framework, electron-builder, electron-download-manager, electron-progressbar, electron-store, electron-updater, electron-window-state, fs, is-online, request, unzipper and url packages with their dependecies.');
   }
@@ -447,6 +448,20 @@ function openDialog(title, message){
       submenu: [
         { role: 'reload' },
         { role: 'forcereload' },
+        {
+          label: 'Back',
+          accelerator: 'CmdOrCtrl+Left',
+          click() {
+            mainWindow.webContents.goBack()
+          }
+        },
+        {
+          label: 'Forward',
+          accelerator: 'CmdOrCtrl+Right',
+          click() {
+            mainWindow.webContents.goForward()
+          }
+        },
         { role: 'toggledevtools' },
         { type: 'separator' },
         { role: 'togglefullscreen' }
@@ -494,6 +509,33 @@ const menu = Menu.buildFromTemplate(template)
   mainWindow.webContents.on('new-window', (event, url) => {
       event.preventDefault()
       mainWindow.loadURL(url)
+  })
+
+
+  mainWindow.webContents.on('did-navigate', () => {
+    mainWindow.webContents.executeJavaScript(`
+    var backbtn = document.createElement("button")
+    backbtn.setAttribute("type", "button")
+    backbtn.appendChild(document.createTextNode("Back"))
+    backbtn.style.fontSize = "small"
+    backbtn.style.height = "30px"
+    backbtn.style.color = "black"
+    backbtn.style.textDecoration = "none"
+    backbtn.addEventListener("click", () => window.history.back())
+
+    var forwardbtn = document.createElement("button")
+    forwardbtn.setAttribute("type", "button")
+    forwardbtn.appendChild(document.createTextNode("Forward"))
+    forwardbtn.style.fontSize = "small"
+    forwardbtn.style.height = "30px"
+    forwardbtn.style.marginLeft = "5px"
+    forwardbtn.style.color = "black"
+    forwardbtn.style.textDecoration = "none"
+    forwardbtn.addEventListener("click", () => window.history.forward())
+  
+    document.getElementById("site-nav").appendChild(backbtn)
+    document.getElementById("site-nav").appendChild(forwardbtn)
+  `);
   })
 
   mainWindow.webContents.on('will-navigate', (event, url) => {
