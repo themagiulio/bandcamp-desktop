@@ -129,8 +129,8 @@ function createWindow(){
                 const $ = cheerio.load(body);
                 if(store.get('bandCampDesktopPlayer') === undefined || store.get('bandCampDesktopPlayer') === true){
                   const scripts = $('script');
-                  //const imgs = $('img');
-                  const data = JSON.parse(scripts[3]['attribs']['data-tralbum']);
+
+                  const data = JSON.parse(scripts[4]['attribs']['data-tralbum']);
 
                   const trackInfo = data['trackinfo'];
 
@@ -511,41 +511,12 @@ const menu = Menu.buildFromTemplate(template)
       mainWindow.loadURL(url)
   })
 
-
-  mainWindow.webContents.on('did-navigate', () => {
-    mainWindow.webContents.executeJavaScript(`
-    var backbtn = document.createElement("button")
-    backbtn.setAttribute("type", "button")
-    backbtn.appendChild(document.createTextNode("Back"))
-    backbtn.style.fontSize = "small"
-    backbtn.style.height = "30px"
-    backbtn.style.color = "black"
-    backbtn.style.textDecoration = "none"
-    backbtn.addEventListener("click", () => window.history.back())
-
-    var forwardbtn = document.createElement("button")
-    forwardbtn.setAttribute("type", "button")
-    forwardbtn.appendChild(document.createTextNode("Forward"))
-    forwardbtn.style.fontSize = "small"
-    forwardbtn.style.height = "30px"
-    forwardbtn.style.marginLeft = "5px"
-    forwardbtn.style.color = "black"
-    forwardbtn.style.textDecoration = "none"
-    forwardbtn.addEventListener("click", () => window.history.forward())
-  
-    document.getElementById("site-nav").appendChild(backbtn)
-    document.getElementById("site-nav").appendChild(forwardbtn)
-  `);
-  })
-
   mainWindow.webContents.on('will-navigate', (event, url) => {
     var domain = require('url').parse(url).hostname;
       if(!domain.includes('bandcamp.com') && !domain.includes('bcbits.com')){
         shell.openExternal(url);
         event.preventDefault();
       }else if(domain.includes('bcbits.com')){
-
-
         var downloadBar = new progressBar({
           title: 'Bandcamp Desktop - Download Manager',
           text: 'Bandcamp Desktop is downloading and extracting your music...',
