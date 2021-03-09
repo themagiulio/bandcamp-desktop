@@ -1,7 +1,7 @@
 {
   "name": "bandcamp-desktop",
   "productName": "Bandcamp Desktop",
-  "version": "2.3.5",
+  "version": "2.3.7",
   "description": "Bandcamp Desktop is a crossplatform desktop application. It allows you to use bandcamp.com in an easy and quick way. Keep listening to music while you explore the website.",
   "main": "src/main.js",
   "scripts": {

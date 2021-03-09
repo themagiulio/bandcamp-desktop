@@ -130,7 +130,7 @@ function createWindow(){
                 if(store.get('bandCampDesktopPlayer') === undefined || store.get('bandCampDesktopPlayer') === true){
                   const scripts = $('script');
 
-                  const data = JSON.parse(scripts[4]['attribs']['data-tralbum']);
+                  const data = JSON.parse(scripts[3]['attribs']['data-tralbum']);
 
                   const trackInfo = data['trackinfo'];
 
