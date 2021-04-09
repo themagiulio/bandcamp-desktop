@@ -129,8 +129,19 @@ function createWindow(){
                 const $ = cheerio.load(body);
                 if(store.get('bandCampDesktopPlayer') === undefined || store.get('bandCampDesktopPlayer') === true){
                   const scripts = $('script');
+                  let data = scripts[3]['attribs']['data-tralbum'];
 
-                  const data = JSON.parse(scripts[3]['attribs']['data-tralbum']);
+                  if(data === undefined) {
+                    data2 = scripts[4]['attribs']['data-tralbum'];
+                    if(data2 !== undefined) {
+                      data = JSON.parse(data2);
+                    }else {
+                      openDialog('Bandcamp Desktop - Error', 'Bandcamp Desktop cannot grab the requested data.\nTry to switch to the legacy Mini Player by uncecking Bandcamp Desktop Player in File>Preferences.');
+                      return;
+                    }
+                  }else {
+                    data = JSON.parse(data);
+                  }
 
                   const trackInfo = data['trackinfo'];
 
@@ -170,7 +181,7 @@ function createWindow(){
                 }else{
                   var meta = $('meta');
                   var title = $('title').text();
-                  var id = meta[20]['attribs']['content'].replace('https://bandcamp.com/EmbeddedPlayer/v=2/album=', '').replace('/size=large/tracklist=false/artwork=small/', '');
+                  var id = meta[19]['attribs']['content'].replace('https://bandcamp.com/EmbeddedPlayer/v=2/album=', '').replace('/size=large/tracklist=false/artwork=small/', '');
   
                   if(id != ''){
                     player = new BrowserWindow({
@@ -207,7 +218,7 @@ function createWindow(){
 
               });
             }else{
-              openDialog('Bandcamp Desktop - Error', 'Mini Player can be opened only in album pages.')
+              openDialog('Bandcamp Desktop - Error', 'Mini Player can be opened only in album pages.');
             }
           },
         },
@@ -590,10 +601,6 @@ const menu = Menu.buildFromTemplate(template)
 
 }
 
-ipcMain.on('setVolume', (e, volume) => {
-    store.set('volume', volume);
-})
-
 // Updater
 autoUpdater.on('update-available', () => {
   mainWindow.webContents.send('update_available');
@@ -602,6 +609,10 @@ autoUpdater.on('update-available', () => {
 autoUpdater.on('update-downloaded', () => {
   mainWindow.webContents.send('update_downloaded');
 });
+
+ipcMain.on('setVolume', (e, volume) => {
+  store.set('volume', volume);
+})
 
 ipcMain.on('restart_app', () => {
   autoUpdater.quitAndInstall();
