@@ -130,6 +130,11 @@ function createWindow(){
                 if(store.get('bandCampDesktopPlayer') === undefined || store.get('bandCampDesktopPlayer') === true){
                   const scripts = $('script');
                   let data = scripts[3]['attribs']['data-tralbum'];
+                  let album_img;
+
+                  $("a").each(function(i, e) {
+                      if (e['attribs']['class'] === 'popupImage' && e['parent']['attribs']['id'] === 'tralbumArt') album_img = e['attribs']['href'];
+                  });
 
                   if(data === undefined) {
                     data2 = scripts[4]['attribs']['data-tralbum'];
@@ -150,20 +155,15 @@ function createWindow(){
                     height: 600,
                     center: true,
                     webPreferences: {
-                      nodeIntegration: true
+                      nodeIntegration: true,
+                      contextIsolation: false
                     }
                   });
   
-                  var title = $('title').text();
-  
-                  let tracks = {
-                    title: title,
-                    tracks: trackInfo
-                  }
-  
                   let album = {
                     title: data['current']['title'],
-                    artist: data['artist']
+                    artist: data['artist'],
+                    image: album_img
                   }
 
                   player.loadURL(url.format({
@@ -175,7 +175,7 @@ function createWindow(){
                   player.setResizable(false);
   
                   setTimeout(() => {
-                    player.webContents.send('playerConfig', tracks, album, store.get('volume'));
+                    player.webContents.send('playerConfig', trackInfo, album, store.get('volume'));
                   }, 1000) 
 
                 }else{
@@ -524,10 +524,7 @@ const menu = Menu.buildFromTemplate(template)
 
   mainWindow.webContents.on('will-navigate', (event, url) => {
     var domain = require('url').parse(url).hostname;
-      if(!domain.includes('bandcamp.com') && !domain.includes('bcbits.com')){
-        shell.openExternal(url);
-        event.preventDefault();
-      }else if(domain.includes('bcbits.com')){
+      if(domain.includes('bcbits.com')){
         var downloadBar = new progressBar({
           title: 'Bandcamp Desktop - Download Manager',
           text: 'Bandcamp Desktop is downloading and extracting your music...',
@@ -592,8 +589,21 @@ const menu = Menu.buildFromTemplate(template)
 
         });
         event.preventDefault();
+      }else {
+        request({
+          uri: url,
+          }, function(error, response, body) {
+          
+          const $ = cheerio.load(body);
+          const favicon = $('link')[0]['attribs']['href'];
+          
+          if(!favicon.includes('bcbits.com')) {
+            shell.openExternal(url);
+            event.preventDefault();
+          }
+        })
       }
-  })
+    })
 
   mainWindow.on('page-title-updated', (event) => {
     event.preventDefault();

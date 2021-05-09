@@ -21,10 +21,17 @@
                 outline: none;
                 box-shadow: none;
             }
+            img {
+                -webkit-user-drag: none;
+                -khtml-user-drag: none;
+                -o-user-drag: none;
+            }
         </style>
     </head>
     <body>
         <center style="margin-top: 20px;">
+            <img id="albumImg" src="" height="200" width="auto"/>
+            <br/><br/>
             <button id="rewindBtn" type="button" class="btn"><img src="icons/rewind.png"/></button>
             <button id="playBtn" type="button" class="btn"><img id="playBtnImg" src="icons/play.png"/></button>
             <button id="forwardBtn" type="button" class="btn"><img src="icons/forward.png"/></button>
@@ -46,6 +53,7 @@
         const list = document.getElementById('tracks');
         const player = document.getElementById('player');
         const playerSource = document.getElementById('playerSource');
+        const albumImg = document.getElementById('albumImg');
         const albumInfo = document.getElementById('albumInfo')
         const albumTitle = document.getElementById('albumTitle');
         const albumArtist = document.getElementById('albumArtist');
@@ -68,21 +76,22 @@
                 index = 0;
             }
             currentSong = document.querySelector(`[index="${index}"]`);
-            playerSource.src = tracksList['tracks'][index]['file']['mp3-128'];
+            playerSource.src = tracksList[index]['file']['mp3-128'];
             currentSong.style.fontWeight = 900;
             player.load();
             player.play();
         }
 
         ipcRenderer.on('playerConfig', function (event, tracks, album, volume){
-            document.title = tracks.title;
+            document.title = album.title + " - " + album.artist;
             tracksList = tracks;
+            albumImg.setAttribute('src', album.image);
             albumTitle.innerHTML = album.title;
             albumArtist.innerHTML = album.artist;
             albumInfo.hidden = false;
-            playerSource.src = tracks['tracks'][0]['file']['mp3-128'];
+            playerSource.src = tracks[0]['file']['mp3-128'];
             player.load();
-            tracks['tracks'].forEach((e, i) => {
+            tracks.forEach((e, i) => {
                 var track = document.createElement('li');
                 track.classList.add('list-group-item');
                 var trackLink = document.createElement('a');
