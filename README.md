@@ -36,7 +36,6 @@ In order to continue, you need to install the following softwares:
 - The following Python packages:
     - inquirer
     - GitPython
-    - pathlib
     - pynpm
 
 To install a Python package you simply need to write in the Command Line:
