@@ -26,6 +26,28 @@ Bandcamp Desktop is available for Windows, Mac OSX and Linux.
 
 <em>Note: depending on your OS settings, you may receive a security warning upon installation. This has to do with Bandcamp Desktop being an unsigned application. You can find out more by researching code-signing for Apple and Microsoft.</em>
 
+## Build from the master branch
+I try to publish a new version every month with new features and improvements. If you don't want to wait you can clone this repository and build Bandcamp Desktop from source.<br/>
+If you don't know how to do it I created a simple Python script which does it for you.
+
+In order to continue, you need to install the following softwares:
+- <a href="https://nodejs.org/en/">node.js</a>
+- <a href="https://www.python.org/">Python</a> and <a href="https://pip.pypa.io/en/stable/">pip</a>
+- The following Python packages:
+    - inquirer
+    - GitPython
+    - pathlib
+    - pynpm
+
+To install a Python package you simply need to write in the Command Line:
+```
+pip install <Package Name>
+```
+After that you just need to download and run the script <a href="https://gist.github.com/themagiulio/4faae10ac7514cb2e26e8bc1009e83e4">bandcamp-desktop_from_master.py</a>:
+```
+python bandcamp-desktop_from_master.py
+```
+
 ## Developer Install Instructions
 
 1) Download <a href="https://nodejs.org/en/">node.js</a>.
