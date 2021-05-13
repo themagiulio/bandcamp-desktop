@@ -118,7 +118,6 @@ function createWindow(){
           accelerator: process.platform == 'darwin' ? 'Command+Space' : 'Ctrl+Space',
           click(){
             let webPageUrl = mainWindow.webContents.getURL();
-
             var subdomain =  webPageUrl.split('.')[1].replace('https://','') ? webPageUrl.split('.')[0].replace('https://','') : false;
 
             if(subdomain !== 'bandcamp' && subdomain !== 'daily'){
@@ -129,24 +128,23 @@ function createWindow(){
                 const $ = cheerio.load(body);
                 if(store.get('bandCampDesktopPlayer') === undefined || store.get('bandCampDesktopPlayer') === true){
                   const scripts = $('script');
-                  let data = scripts[3]['attribs']['data-tralbum'];
+                  let data;
                   let album_img;
+
+                  for(var i=3; i<=5; i++) {
+                    data = scripts[i]['attribs']['data-tralbum'];
+                    if(data !== undefined) break;
+                  }
+
+                  if(data === undefined) return openDialog('Bandcamp Desktop - Error', 'Bandcamp Desktop cannot grab the requested data.\nTry to switch to the legacy Mini Player by uncecking Bandcamp Desktop Player in File>Preferences.');
+
+                  data = JSON.parse(data);
 
                   $("a").each(function(i, e) {
                       if (e['attribs']['class'] === 'popupImage' && e['parent']['attribs']['id'] === 'tralbumArt') album_img = e['attribs']['href'];
                   });
 
-                  if(data === undefined) {
-                    data2 = scripts[4]['attribs']['data-tralbum'];
-                    if(data2 !== undefined) {
-                      data = JSON.parse(data2);
-                    }else {
-                      openDialog('Bandcamp Desktop - Error', 'Bandcamp Desktop cannot grab the requested data.\nTry to switch to the legacy Mini Player by uncecking Bandcamp Desktop Player in File>Preferences.');
-                      return;
-                    }
-                  }else {
-                    data = JSON.parse(data);
-                  }
+                  if(!data.url.includes('album')) return openDialog('Bandcamp Desktop - Error', 'Mini Player can be opened only in album pages.');
 
                   const trackInfo = data['trackinfo'];
 
@@ -164,7 +162,7 @@ function createWindow(){
                     title: data['current']['title'],
                     artist: data['artist'],
                     image: album_img
-                  }
+                  };
 
                   player.loadURL(url.format({
                     pathname: path.join(__dirname, 'player.html'),
@@ -176,7 +174,7 @@ function createWindow(){
   
                   setTimeout(() => {
                     player.webContents.send('playerConfig', trackInfo, album, store.get('volume'));
-                  }, 1000) 
+                  }, 1000);
 
                 }else{
                   var meta = $('meta');
