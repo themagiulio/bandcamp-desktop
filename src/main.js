@@ -16,14 +16,28 @@ const windowStateKeeper = require('electron-window-state');
 let mainWindow;
 const store = new electonStore();
 let downloadFolder = store.get('downloadFolder') === undefined ? app.getPath('downloads') + '/bandcamp-desktop/' : store.get('downloadFolder');
+let shortcutsPath = path.join(downloadFolder, '.shortcuts.json');
 
-if(!fs.existsSync(downloadFolder)){
-  fs.mkdirSync(downloadFolder);
+function openDialog(title, message){
+  dialog.showMessageBoxSync(mainWindow, {
+    title: title,
+    message: message
+  });
 }
 
-downloadManager.register({
-    downloadFolder: downloadFolder
+if(!fs.existsSync(downloadFolder)) fs.mkdirSync(downloadFolder);
+
+if(!fs.existsSync(shortcutsPath)) {
+  fs.copyFileSync(path.join(__dirname, 'default-shortcuts.json'), shortcutsPath);
+}
+
+const shortcuts = require(shortcutsPath);
+
+fs.watchFile(shortcutsPath, () => {
+  openDialog('Bandcamp Desktop', 'You need to restart the app in order to apply the changes.');
 });
+
+downloadManager.register({ downloadFolder: downloadFolder });
 
 app.setName('Bandcamp Desktop');
 app.allowRendererProcessReuse = true;
@@ -68,16 +82,8 @@ function createWindow(){
 
   autoUpdater.checkForUpdatesAndNotify();
 
-  function openDialog(title, message){
-    const response = dialog.showMessageBox(mainWindow,
-    {
-      title: title,
-      message: message
-    });
-  }
-
   function about(){
-    openDialog('Bandcamp Desktop - About', 'Bandcamp Desktop is a crossplatform desktop application which allows you to use bandcamp.com in an easy and quick way.\n\nVersion: v' + app.getVersion() + '\nDeveloped by: Giulio De Matteis <giuliodematteis@icloud.com>\n\nBuilt using cheerio, electron framework, electron-builder, electron-download-manager, electron-progressbar, electron-store, electron-updater, electron-window-state, fs, is-online, request, unzipper and url packages with their dependecies.');
+    openDialog('Bandcamp Desktop - About', 'Bandcamp Desktop is a crossplatform desktop application which allows you to use bandcamp.com in an easy and quick way.\n\nVersion: v' + app.getVersion() + '\nDeveloped by: Giulio De Matteis <giuliodematteis@icloud.com>\n\nBuilt using cheerio, electron framework, electron-builder, electron-download-manager, electron-progressbar, electron-store, electron-updater, electron-window-state, is-online, request, unzipper and url packages with their dependecies.');
   }
 
   function tag(tag){
@@ -115,7 +121,7 @@ function createWindow(){
       submenu: [
         {
           label: 'Mini Player',
-          accelerator: process.platform == 'darwin' ? 'Command+Space' : 'Ctrl+Space',
+          accelerator: shortcuts['Mini Player'],
           click(){
             let webPageUrl = mainWindow.webContents.getURL();
             var subdomain =  webPageUrl.split('.')[1].replace('https://','') ? webPageUrl.split('.')[0].replace('https://','') : false;
@@ -357,7 +363,7 @@ function createWindow(){
             },
             {
               label: 'Filters',
-              accelerator: process.platform == 'darwin' ? 'Command+F' : 'Ctrl+F',
+              accelerator: shortcuts['Filters'],
               click(){
                 mainWindow.loadURL(require('url').format({
                   pathname: 'bandcamp.com',
@@ -371,7 +377,7 @@ function createWindow(){
         },
         {
           label: 'Library',
-          accelerator: process.platform == 'darwin' ? 'Command+L' : 'Ctrl+L',
+          accelerator: shortcuts['Library'],
           click(){
             shell.openPath(downloadFolder)
           }
@@ -382,7 +388,7 @@ function createWindow(){
           submenu: [
             {
               label: 'Bandcamp Desktop Player',
-              accelerator: 'Shift+B',
+              accelerator: shortcuts['Bandcamp Desktop Player'],
               type: 'checkbox',
               checked: store.get('bandCampDesktopPlayer') === undefined ? true : store.get('bandCampDesktopPlayer'),
               click(){
@@ -395,7 +401,7 @@ function createWindow(){
             },
             {
               label: 'Change Library Folder Location',
-              accelerator: 'Shift+L',
+              accelerator: shortcuts['Change Library Folder Location'],
               click(){
                 dialog.showOpenDialog(mainWindow, {
                       properties:
@@ -410,13 +416,19 @@ function createWindow(){
                   }
                 })
               }
+            },
+            {
+              label: 'Change Keyboard Shortcuts',
+              click(){
+                shell.openPath(shortcutsPath);
+              }
             }
           ]
         },
         { type: 'separator' },
         {
           label: 'Open in Browser Window',
-          accelerator: process.platform == 'darwin' ? 'Command+O' : 'Ctrl+O',
+          accelerator: shortcuts['Open in Browser Window'],
           click: async () => {
             await shell.openExternal(mainWindow.webContents.getURL())
           }
@@ -459,14 +471,14 @@ function createWindow(){
         { role: 'forcereload' },
         {
           label: 'Back',
-          accelerator: 'CmdOrCtrl+Left',
+          accelerator: shortcuts['Back'],
           click() {
             mainWindow.webContents.goBack()
           }
         },
         {
           label: 'Forward',
-          accelerator: 'CmdOrCtrl+Right',
+          accelerator: shortcuts['Forward'],
           click() {
             mainWindow.webContents.goForward()
           }
@@ -510,10 +522,7 @@ function createWindow(){
     }
   ]
 
-
-const menu = Menu.buildFromTemplate(template)
-  Menu.setApplicationMenu(menu)
-
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
   mainWindow.webContents.on('new-window', (event, url) => {
       event.preventDefault()

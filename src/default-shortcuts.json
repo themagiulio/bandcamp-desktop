@@ -1,0 +1,12 @@
+{
+    "Mini Player": "CmdOrCtrl+Space",
+    "Filters": "CmdOrCtrl+F",
+    "Library": "CmdOrCtrl+L",
+    "Bandcamp Desktop Player": "Shift+B",
+    "Change Library Folder Location": "Shift+L",
+    "Open in Browser Window": "CmdOrCtrl+O",
+    "Back": "CmdOrCtrl+Left",
+    "Forward": "CmdOrCtrl+Right",
+    "Minimize": "CmdOrCtrl+M",
+    "Close": "CmdOrCtrl+W"
+}

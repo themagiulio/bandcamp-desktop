@@ -1,7 +1,7 @@
 {
   "name": "bandcamp-desktop",
   "productName": "Bandcamp Desktop",
-  "version": "2.3.8",
+  "version": "2.3.9",
   "description": "Bandcamp Desktop is a crossplatform desktop application. It allows you to use bandcamp.com in an easy and quick way. Keep listening to music while you explore the website.",
   "main": "src/main.js",
   "scripts": {
@@ -21,6 +21,7 @@
   "homepage": "https://github.com/themagiulio/bandcamp-desktop#readme",
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
+    "chokidar": "^3.5.2",
     "electron-download-manager": "^2.1.2",
     "electron-progressbar": "^1.2.0",
     "electron-store": "^6.0.1",
