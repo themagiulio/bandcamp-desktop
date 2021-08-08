@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Loading...</title>
+    <meta charset="UTF-8">
+  </head>
+  <body>
+    <iframe id="player" style="border: 0; width: 350px; height: 600px;" seamless>
+    </iframe>
+    <script>
+      const { ipcRenderer } = require('electron');
+
+      ipcRenderer.on('playerConfig', function (event, title, id) {
+        document.title = title;
+        document.getElementById('player').src = `https://bandcamp.com/EmbeddedPlayer/album=${id}/size=large/bgcol=ffffff/tracklist=true/transparent=true/`;
+      });
+    </script>
+  </body>
+  </html>

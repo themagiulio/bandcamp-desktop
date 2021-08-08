@@ -3,7 +3,7 @@
     <head>
         <title>Loading...</title>
         <meta charset="UTF-8">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+        <link rel="stylesheet" href="./css/bootstrap.min.css">
         <style>
             audio:focus {
                 outline:0px;
@@ -49,7 +49,7 @@
         </ul>
     </body>
     <script>
-        const { ipcRenderer } = require('electron')
+        const { ipcRenderer } = require('electron');
         const list = document.getElementById('tracks');
         const player = document.getElementById('player');
         const playerSource = document.getElementById('playerSource');
