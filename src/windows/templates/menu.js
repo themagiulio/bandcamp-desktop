@@ -2,6 +2,7 @@ const { app, shell, dialog } = require('electron');
 const Store = require('electron-store');
 const path = require('path');
 const Url = require('url');
+const fs = require('fs');
 const miniPlayer = require('../../lib/miniPlayer');
 const showDialog = require('../../lib/dialog');
 const { downloadFolder } = require('../../lib/download');
@@ -11,6 +12,12 @@ const store = new Store();
 const isMac = process.platform === 'darwin';
 
 const shortcutsPath = path.join(downloadFolder, '.shortcuts.json');
+
+if(!fs.existsSync(downloadFolder)) fs.mkdirSync(downloadFolder);
+
+if(!fs.existsSync(shortcutsPath)) {
+  fs.copyFileSync(path.join(__dirname, '..', '..', 'static', 'default-shortcuts.json'), shortcutsPath);
+}
 
 const shortcuts = require(shortcutsPath);
 

@@ -11,13 +11,7 @@ const offlineWin = require('./windows/offline');
 
 const store = new Store();
 
-if(!fs.existsSync(downloadFolder)) fs.mkdirSync(downloadFolder);
-
 const shortcutsPath = path.join(downloadFolder, '.shortcuts.json');
-
-if(!fs.existsSync(shortcutsPath)) {
-  fs.copyFileSync(path.join(__dirname, 'static', 'default-shortcuts.json'), shortcutsPath);
-}
 
 fs.watchFile(shortcutsPath, () => {
   showDialog('Bandcamp Desktop', 'You need to restart the app in order to apply the changes.');
