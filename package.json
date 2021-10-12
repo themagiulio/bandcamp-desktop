@@ -33,7 +33,7 @@
     "url": "^0.11.0"
   },
   "devDependencies": {
-    "electron": "^13.1.7",
+    "electron": "^13.3.0",
     "electron-builder": "^21.2.0"
   },
   "build": {
