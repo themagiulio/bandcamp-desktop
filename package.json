@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/themagiulio/bandcamp-desktop#readme",
   "dependencies": {
-    "cheerio": "^1.0.0-rc.3",
+    "cheerio": "^1.0.0-rc.12",
     "chokidar": "^3.5.2",
     "electron-download-manager": "^2.1.2",
     "electron-progressbar": "^1.2.0",
