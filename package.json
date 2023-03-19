@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "electron": "^22.0.0",
-    "electron-builder": "^23.6.0"
+    "electron-builder": "^24.0.0"
   },
   "build": {
     "directories": {
